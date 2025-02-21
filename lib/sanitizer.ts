@@ -31,6 +31,17 @@ import { parseStringPromise } from "xml2js";
 /**
  * Remove namespaces (ex: SOAP-ENV, cwmp) e converte XML para JSON padronizado
  */
+
+export function cleanKeys(obj: any): any {
+  if (typeof obj !== "object" || obj === null) return obj;
+
+  return Object.keys(obj).reduce((acc: Record<string, any>, key) => {
+    const cleanKey = key.replace(/^.*:/, ""); // Remove namespace (ex: "SOAP-ENV:Body" → "Body")
+    acc[cleanKey] = cleanKeys(obj[key]); // Recursão para limpar sub-objetos
+    return acc;
+  }, {});
+}
+
 export async function sanitizeSoapData(
   xml: string
 ): Promise<Record<string, any>> {
@@ -39,16 +50,6 @@ export async function sanitizeSoapData(
     const rawJson = await parseStringPromise(xml, { explicitArray: false });
 
     // Remove namespaces (ex: "SOAP-ENV:Envelope" → "Envelope")
-    function cleanKeys(obj: any): any {
-      if (typeof obj !== "object" || obj === null) return obj;
-
-      return Object.keys(obj).reduce((acc: Record<string, any>, key) => {
-        const cleanKey = key.replace(/^.*:/, ""); // Remove namespace (ex: "SOAP-ENV:Body" → "Body")
-        acc[cleanKey] = cleanKeys(obj[key]); // Recursão para limpar sub-objetos
-        return acc;
-      }, {});
-    }
-
     // Sanitiza o JSON
     return cleanKeys(rawJson);
   } catch (error) {

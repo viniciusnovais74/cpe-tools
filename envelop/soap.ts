@@ -13,9 +13,27 @@ export const soap = (cwmpID: string) => {
   `;
 };
 
+export const Reboot = (cwmpID: string) => {
+  return `
+    <?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:cwmp="urn:dslforum-org:cwmp-1-2">
+   <soapenv:Header>
+      <cwmp:ID soapenv:mustUnderstand="1">${cwmpID}</cwmp:ID>
+   </soapenv:Header>
+   <soapenv:Body>
+      <cwmp:Reboot>
+         <CommandKey>RebootCommand</CommandKey>
+      </cwmp:Reboot>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+  
+  `;
+};
+
 export const getAllParameters = (cwmpID: string) => {
- 
-return `
+  return `
    <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" 
                        xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" 
                        xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
@@ -32,8 +50,8 @@ return `
         </cwmp:GetParameterValues>
       </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
- `
- 
+ `;
+
   return `
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cwmp="urn:dslforum-org:cwmp-1-0">
       <SOAP-ENV:Header>

@@ -7,7 +7,7 @@ interface IEvents extends Document {
 }
 
 const EventSchema = new Schema<IEvents>({
-  serialNumber: { type: String, required: true, unique: true },
+  serialNumber: { type: String, required: true },
   envelopeTemplate: { type: String, required: true },
   referId: { type: String, required: true },
 });

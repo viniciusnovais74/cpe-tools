@@ -15,7 +15,7 @@ const CPESchema = new Schema<Icpe>({
   softwareVersion: { type: String, required: true },
   event: { type: String, required: true },
   lastUpdated: { type: Date, default: Date.now },
-  parametros: { type: [{ chave: String, valor: Schema.Types.Mixed }], default: [] }, // Array de objetos
+  parametros: { type: [{ name: String, value: Schema.Types.Mixed }], default: [] }, // Array de objetos
 });
 
 export default mongoose.models.CPE || mongoose.model<Icpe>("CPE",CPESchema);

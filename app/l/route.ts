@@ -15,25 +15,27 @@ export async function POST(request: Request) {
     const cwmpID = match ? match[1] : "0"; // Se não encontrar, usa "0"
 
     if (!body.trim()) {
-      const cpeData = {
-        serialNumber: generateRandomText(),
-        hardwareVersion: generateRandomText(),
-        softwareVersion: generateRandomText(),
-        event: generateRandomText(),
-      };
+      const authHeader = req.headers.authorization || "";
+      console.log(authHeader)
+      // const cpeData = {
+      //   serialNumber: generateRandomText(),
+      //   hardwareVersion: generateRandomText(),
+      //   softwareVersion: generateRandomText(),
+      //   event: generateRandomText(),
+      // };
 
-      const uid = await CPE.create(cpeData);
+      // const uid = await CPE.create(cpeData);
 
-      return new Response(
-        setUrlConnection(
-          cwmpID,
-          `${process.env.HOSTNAME}/devices/${uid._id}`
-        ),
-        {
-          status: 200,
-          headers: { "Content-Type": "text/xml" },
-        }
-      );
+      // return new Response(
+      //   setUrlConnection(
+      //     cwmpID,
+      //     `${process.env.HOSTNAME}/devices/${uid._id}`
+      //   ),
+      //   {
+      //     status: 200,
+      //     headers: { "Content-Type": "text/xml" },
+      //   }
+      // );
     }
 
     return new Response(soap(cwmpID), {
