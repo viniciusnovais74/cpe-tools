@@ -13,12 +13,6 @@ export function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link href="/cpe/1" className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-700">
-              <Wifi className="h-5 w-5" />
-              <span>Manage CPE</span>
-            </Link>
-          </li>
-          <li>
             <Link href="/analytics" className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-700">
               <BarChart2 className="h-5 w-5" />
               <span>Analytics</span>
@@ -38,12 +32,12 @@ export function Sidebar() {
           </li>
         </ul>
       </nav>
-      <div className="absolute bottom-4 left-4">
+      {/* <div className="absolute bottom-4 left-4">
         <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-700">
           <LogOut className="h-5 w-5" />
           <span>Logout</span>
         </button>
-      </div>
+      </div> */}
     </aside>
   )
 }
