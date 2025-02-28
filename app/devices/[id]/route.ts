@@ -39,10 +39,6 @@ export async function POST(
   const id = (await params).id;
   const match = body.match(/<cwmp:ID[^>]*>(.*?)<\/cwmp:ID>/);
   const cwmpID = match ? match[1] : "0"; // Se não encontrar, usa "0"
-  let template: string = (await new EnvelopeQueue(body).start(id)) || "soap";
-
-  const fun = soapFunctions[template];
-  template == "NotResponse" ? "" : fun(cwmpID)
   return new Response(envelopeContinue(cwmpID), {
     headers: { "Content-Type": "text/xml" },
   });
