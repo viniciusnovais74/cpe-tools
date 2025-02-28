@@ -1,4 +1,4 @@
-const envelopeContinue = (cwmpID: string) => {
+export const envelopeContinue = (cwmpID: string) => {
   return `
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cwmp="urn:dslforum-org:cwmp-1-0">
       <SOAP-ENV:Header>
@@ -64,7 +64,7 @@ const getAllParameters = (cwmpID: string) => {
   `;
 };
 
-const setUrlConnection = (cwmpID: string, url: string) => {
+export const setUrlConnection = (cwmpID: string, url: string) => {
   return `
     <SOAP-ENV:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cwmp="urn:dslforum-org:cwmp-1-2">
       <SOAP-ENV:Header>

@@ -1,5 +1,5 @@
-// import soapFunctions from "@/envelop/soap";
-// import EnvelopeQueue from "@/lib/EnvelopeQueue";
+import soapFunctions, { envelopeContinue, setUrlConnection } from "@/envelop/soap";
+import EnvelopeQueue from "@/lib/EnvelopeQueue";
 import connectDB from "@/lib/mongodb";
 import cpe from "../../../models/cpe";
 import event from "@/models/Events";
@@ -37,17 +37,13 @@ export async function POST(
 ) {
   const body = await request.text();
   const id = (await params).id;
+  const match = body.match(/<cwmp:ID[^>]*>(.*?)<\/cwmp:ID>/);
+  const cwmpID = match ? match[1] : "0"; // Se não encontrar, usa "0"
+  let template: string = (await new EnvelopeQueue(body).start(id)) || "soap";
 
-  // let template: string = (await new EnvelopeQueue(body).start(id)) || "soap";
-
-  // if (!body.trim() && id) {
-  //   const newTemplate = await new EnvelopeQueue().command(id);
-  //   if (newTemplate) template = newTemplate;
-  // }
-
-  // const fun = soapFunctions[template];
-  // template == "NotResponse" ? "" : fun(cwmpID)
-  return new Response("", {
+  const fun = soapFunctions[template];
+  template == "NotResponse" ? "" : fun(cwmpID)
+  return new Response(envelopeContinue(cwmpID), {
     headers: { "Content-Type": "text/xml" },
   });
 }

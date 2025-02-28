@@ -6,7 +6,6 @@ if (!MONGODB_URI) {
   throw new Error('Defina a variável MONGODB_URI no .env.local');
 }
 
-
 const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) {
     return;
@@ -16,7 +15,6 @@ const connectDB = async () => {
     await mongoose.connect(MONGODB_URI);
     console.log("✅ Conectado ao MongoDB");
   } catch (error) {
-    console.log(MONGODB_URI)
     console.error("❌ Erro ao conectar ao MongoDB:", error);
     process.exit(1);
   }

@@ -9,6 +9,7 @@ export default class EnvelopeQueue {
   parsed: any = {};
   id?: any;
   #xml?: any;
+
   constructor(envelope: string, id?: string) {
     this.envelope = envelope;
     this.id = id;
@@ -62,7 +63,6 @@ export default class EnvelopeQueue {
   }
 
   async checkIfExists(envelop: any, id: any) {
-    console.log(id);
     const informData = envelop?.Inform;
     const cpeData = {
       serialNumber: informData.DeviceId?.SerialNumber || "Desc",
