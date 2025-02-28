@@ -1,32 +1,49 @@
-import { soap } from "@/envelop/soap";
-import { findValueByPath, sanitizeSoapData } from "./sanitizer";
-import event from "@/models/event";
-import cpe from "@/models/cpe";
+import { findValueByPath, sanitizeSoapData } from "./sanitizerParams";
+import event from "@/models/Events";
+import cpe from "@/models/Cpe";
 import connectDB from "./mongodb";
 import { parseStringPromise } from "xml2js";
 
-export default class EnvelopCheck {
-  envelop?: string;
+export default class EnvelopeQueue {
+  envelope: string;
   parsed: any = {};
   id?: any;
-  constructor(envelop?: string) {
-    this.envelop = envelop;
-    this.id = "";
-    connectDB();
+  constructor(envelope: string, id?: string) {
+    this.envelope = envelope;
+    this.id = id;
+    this.#xml = parseStringPromise(this.envelope);
+  }
+
+  private caseExecutation() {
+    switch () {
+      case "inform":
+        break;
+      case "getparametervaluesresponse":
+        break;
+      case "rebootresponse":
+        break;
+      default:
+        break;
+    }
+  }
+
+  async init() {
+    if (!this.envelope) return "";
+    const xml = await this.caseExecutation();
+    return xml;
   }
 
   async start(id?: string) {
     this.id = id;
-    if (!this.envelop) return "";
+    if (!this.envelope) return "";
 
-    this.parsed = await sanitizeSoapData(this.envelop);
-    const match = this.envelop?.match(/<cwmp:ID[^>]*>(.*?)<\/cwmp:ID>/);
+    this.parsed = await sanitizeSoapData(this.envelope);
+    const match = this.envelope?.match(/<cwmp:ID[^>]*>(.*?)<\/cwmp:ID>/);
     const cwmpID = match ? match[1] : "0"; // Se não encontrar, usa "0"
 
     const md = this.parsed?.Envelope?.Body;
     if (md) {
       const princ = Object.entries(md)[0][0].toLowerCase();
-      console.log(princ);
       switch (princ) {
         case "inform":
           this.checkIfExists(md, id);
@@ -35,12 +52,11 @@ export default class EnvelopCheck {
           this.createParameters();
           return "soap";
         case "rebootresponse":
-          return "NotResponse"
+          return "NotResponse";
         default:
-          return "soap"
+          return "soap";
       }
     }
-
     return "";
   }
 
@@ -67,20 +83,18 @@ export default class EnvelopCheck {
   }
 
   async createParameters() {
-    const result = await parseStringPromise(this.envelop);
-    
+    const result = await parseStringPromise(this.envelope);
+
     const paramList =
       result["SOAP-ENV:Envelope"]["SOAP-ENV:Body"][0][
         "cwmp:GetParameterValuesResponse"
       ][0]["ParameterList"][0]["ParameterValueStruct"];
-
 
     const paramArray = Array.isArray(paramList) ? paramList : [paramList];
     const parametros = paramArray.map((param) => ({
       chave: param.Name[0],
       valor: param.Value[0]?._ || "",
     }));
-
 
     await cpe.findOneAndUpdate(
       {

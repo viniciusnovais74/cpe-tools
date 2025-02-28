@@ -1,13 +1,8 @@
-import {
-  getAllParameters,
-  Reboot,
-  setUrlConnection,
-  soap,
-} from "@/envelop/soap";
-import EnvelopCheck from "@/lib/EnvelopCheck";
+import soapFunctions from "@/envelop/soap";
+import EnvelopeQueue from "@/lib/EnvelopeQueue";
 import connectDB from "@/lib/mongodb";
-import cpe from "@/models/cpe";
-import event from "@/models/event";
+import cpe from "@/models/Cpe";
+import event from "@/models/Events";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -36,34 +31,23 @@ export async function GET(
   }
 }
 
-const soapFunctions: Record<
-  string,
-  (cwmpID: string, ...args: any[]) => string
-> = {
-  soap: soap,
-  getAllParameters: getAllParameters,
-  setUrlConnection: setUrlConnection,
-  Reboot: Reboot,
-};
-
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const body = await request.text();
   const id = (await params).id;
-  const match = body?.match(/<cwmp:ID[^>]*>(.*?)<\/cwmp:ID>/);
-  const cwmpID = match ? match[1] : "0"; // Se não encontrar, usa "0"
-  let template: string = (await new EnvelopCheck(body).start(id)) || "soap";
 
-  if (!body.trim() && id) {
-    const newTemplate = await new EnvelopCheck().command(id);
-    if (newTemplate) template = newTemplate;
-  }
+  // let template: string = (await new EnvelopeQueue(body).start(id)) || "soap";
 
-  const fun = soapFunctions[template];
+  // if (!body.trim() && id) {
+  //   const newTemplate = await new EnvelopeQueue().command(id);
+  //   if (newTemplate) template = newTemplate;
+  // }
 
-  return new Response(template == "NotResponse" ? "" : fun(cwmpID), {
+  // const fun = soapFunctions[template];
+  // template == "NotResponse" ? "" : fun(cwmpID)
+  return new Response("", {
     headers: { "Content-Type": "text/xml" },
   });
 }
