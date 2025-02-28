@@ -1,6 +1,6 @@
 import { findValueByPath, sanitizeSoapData } from "./sanitizerParams";
 import event from "@/models/Events";
-import cpe from "@/models/Cpe";
+import cpe from "../models/Cpe";
 import connectDB from "./mongodb";
 import { parseStringPromise } from "xml2js";
 
