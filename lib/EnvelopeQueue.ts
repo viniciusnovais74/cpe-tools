@@ -15,7 +15,7 @@ export default class EnvelopeQueue {
   }
 
   private caseExecutation() {
-    switch () {
+    switch (this.id) {
       case "inform":
         break;
       case "getparametervaluesresponse":

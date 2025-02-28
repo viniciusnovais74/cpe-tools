@@ -76,8 +76,8 @@ export function Dashboard() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {cpeList.map(cpe => (
-                <tr key={cpe._id}>
+              {cpeList.map((cpe,idx) => (
+                <tr key={cpe.idx}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cpe.serialNumber}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ }</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

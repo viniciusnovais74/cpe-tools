@@ -11,6 +11,6 @@ export async function GET(
     const events = await Events.find({ referId: id });
     return Response.json(events);
   } catch (error) {
-    return Response.json("Error", { status: 500 });
+    return Response.json(`Error:${error}`, { status: 500 });
   }
 }

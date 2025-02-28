@@ -1,6 +1,7 @@
 import { CPEManagement } from "@/components/cpe-management"
 
-export default function CPEPage({ params }: { params: { id: string } }) {
-  return <CPEManagement id={params.id} />
+export default async function CPEPage({ params }: { params: Promise<{ id: string }> }) {
+  const id = (await params).id
+  return <CPEManagement id={id} />
 }
 

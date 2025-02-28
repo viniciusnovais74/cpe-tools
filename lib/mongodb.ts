@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = "mongodb://localhost/cpe-tools"; 
+const MONGODB_URI = process.env.MONGO_URL; 
 
 if (!MONGODB_URI) {
   throw new Error('Defina a variável MONGODB_URI no .env.local');
