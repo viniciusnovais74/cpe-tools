@@ -1,5 +1,5 @@
 import connectDB from "@/lib/mongodb";
-import Cpe from "../../../../models/Cpe";
+import Cpe from "../../../../models/cpe";
 import { NextResponse } from "next/server";
 
 export async function GET(

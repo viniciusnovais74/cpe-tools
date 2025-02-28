@@ -1,6 +1,6 @@
 import { findValueByPath, sanitizeSoapData } from "./sanitizerParams";
 import event from "@/models/Events";
-import cpe from "../models/Cpe";
+import cpe from "../models/cpe";
 import connectDB from "./mongodb";
 import { parseStringPromise } from "xml2js";
 
@@ -8,6 +8,7 @@ export default class EnvelopeQueue {
   envelope: string;
   parsed: any = {};
   id?: any;
+  #xml?: any;
   constructor(envelope: string, id?: string) {
     this.envelope = envelope;
     this.id = id;
@@ -60,7 +61,7 @@ export default class EnvelopeQueue {
     return "";
   }
 
-  async checkIfExists(envelop: any, id: string) {
+  async checkIfExists(envelop: any, id: any) {
     console.log(id);
     const informData = envelop?.Inform;
     const cpeData = {

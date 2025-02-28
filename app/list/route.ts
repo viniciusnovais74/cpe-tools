@@ -1,5 +1,5 @@
 import connectDB from "@/lib/mongodb";
-import cpe from  "../../models/Cpe";
+import cpe from  "../../models/cpe";
 
 export async function GET() {
   await connectDB();

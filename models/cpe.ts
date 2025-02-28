@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface Icpe extends Document {
+export interface Icpe extends Document {
   serialNumber: string;
   hardwareVersion: string;
   softwareVersion: string;

@@ -1,7 +1,7 @@
 // import soapFunctions from "@/envelop/soap";
 // import EnvelopeQueue from "@/lib/EnvelopeQueue";
 import connectDB from "@/lib/mongodb";
-import cpe from "../../../models/Cpe";
+import cpe from "../../../models/cpe";
 import event from "@/models/Events";
 import { NextRequest } from "next/server";
 
