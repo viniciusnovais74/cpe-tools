@@ -1,4 +1,3 @@
-import soapFunctions, { envelopeContinue, setUrlConnection } from "@/envelop/soap";
 import EnvelopeQueue from "@/lib/EnvelopeQueue";
 import connectDB from "@/lib/mongodb";
 import cpe from "../../../models/cpe";
@@ -35,13 +34,10 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-
   const body = await request.text();
   const id = (await params).id;
-  const match = body.match(/<cwmp:ID[^>]*>(.*?)<\/cwmp:ID>/);
-  const cwmpID = match ? match[1] : "0"; // Se não encontrar, usa "0"
-  console.log("===>",cwmpID,body)
-  return new Response(envelopeContinue(cwmpID), {
+  const xml = await new EnvelopeQueue(body).init(id);
+  return new Response(xml, {
     headers: { "Content-Type": "text/xml" },
   });
 }

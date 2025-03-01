@@ -1,19 +1,19 @@
-import { findValueByPath, sanitizeSoapData } from "./sanitizerParams";
+import { findValueByPath as fVBP, sanitizeSoapData } from "./sanitizerParams";
 import event from "@/models/Events";
 import cpe from "../models/cpe";
 import connectDB from "./mongodb";
 import { parseStringPromise } from "xml2js";
+import { changeUrlSoap, initSoap } from "@/envelop/soap";
 
 export default class EnvelopeQueue {
   envelope: string;
-  parsed: any = {};
-  id?: any;
-  #xml?: any;
-
-  constructor(envelope: string, id?: string) {
+  id?: string;
+  cwmpID: string;
+  constructor(envelope: string) {
     this.envelope = envelope;
-    this.id = id;
-    this.#xml = parseStringPromise(this.envelope);
+    const match = this.envelope?.match(/<cwmp:ID[^>]*>(.*?)<\/cwmp:ID>/);
+    this.cwmpID = match ? match[1] : "0"; // Se não encontrar, usa "0"
+    connectDB();
   }
 
   private caseExecutation() {
@@ -29,19 +29,11 @@ export default class EnvelopeQueue {
     }
   }
 
-  async init() {
-    if (!this.envelope) return "";
-    const xml = await this.caseExecutation();
-    return xml;
-  }
-
   async start(id?: string) {
     this.id = id;
     if (!this.envelope) return "";
 
     this.parsed = await sanitizeSoapData(this.envelope);
-    const match = this.envelope?.match(/<cwmp:ID[^>]*>(.*?)<\/cwmp:ID>/);
-    const cwmpID = match ? match[1] : "0"; // Se não encontrar, usa "0"
 
     const md = this.parsed?.Envelope?.Body;
     if (md) {
@@ -111,5 +103,67 @@ export default class EnvelopeQueue {
     const template = command[0].envelopeTemplate;
     await event.findOneAndDelete({ referId: id });
     return template;
+  }
+
+  // Só é executado quando não se existe um envelope e talvez possa existir um id
+  async updateOrCreate() {
+    let informCpe: object;
+    if (!this.id && !this.envelope) {
+      informCpe = {
+        serialNumber: "Desc",
+        hardwareVersion: "Desc",
+        softwareVersion: "Desc",
+        event: "Desc",
+      };
+      const response = await cpe.create({ ...informCpe });
+      return changeUrlSoap(
+        Math.random().toString(),
+        `${process.env.HOSTNAME}/devices/${response._id.toString()}`
+      );
+    }
+    if (!this.envelope) return "";
+    const textToXml = await sanitizeSoapData(this.envelope);
+    const informData = textToXml.Envelope.Body?.Inform;
+    if (informData) {
+      informCpe = {
+        serialNumber: informData.DeviceId?.SerialNumber,
+        hardwareVersion: fVBP(
+          textToXml,
+          "InternetGatewayDevice.DeviceInfo.HardwareVersion"
+        )._,
+        softwareVersion: fVBP(
+          textToXml,
+          "InternetGatewayDevice.DeviceInfo.SoftwareVersion"
+        )._,
+        event: informData.Event?.EventCode||'null',
+      };
+      if(!await cpe.findById(this.id)) await cpe.create({...informCpe});
+      await cpe.findOneAndUpdate({ _id: this.id }, { ...informCpe });
+    }
+    return "";
+  }
+
+  async processValidation() {
+    let newCommand: string;
+    newCommand = await this.updateOrCreate();
+    if (newCommand) return newCommand;
+    if (!this.envelope) return "";
+
+    const textToXml = await sanitizeSoapData(this.envelope);
+    if (textToXml.Envelope.Body?.Inform) {
+      const soap = initSoap(this.cwmpID);
+      return soap;
+    }
+
+    if (!this.id) {
+    }
+  }
+
+  async init(id?: string) {
+    // Se o envelope for Vazio mas a CPE estiver utilizando uma rota com ID
+    if (!this.envelope && id) return "";
+    this.id = id;
+    const xml = await this.processValidation();
+    return xml;
   }
 }

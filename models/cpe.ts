@@ -10,7 +10,7 @@ export interface Icpe extends Document {
 }
 
 const CPESchema = new Schema<Icpe>({
-  serialNumber: { type: String, required: true, unique: true },
+  serialNumber: { type: String, required: true },
   hardwareVersion: { type: String, required: true },
   softwareVersion: { type: String, required: true },
   event: { type: String, required: true },

@@ -1,4 +1,4 @@
-import { Home, BarChart2, Settings, HelpCircle, LogOut, Wifi } from "lucide-react"
+import { Home, BarChart2, Settings, HelpCircle, LogOut, Wifi, Mail } from "lucide-react"
 import Link from "next/link"
 
 export function Sidebar() {
@@ -16,6 +16,12 @@ export function Sidebar() {
             <Link href="/analytics" className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-700">
               <BarChart2 className="h-5 w-5" />
               <span>Analytics</span>
+            </Link>
+          </li>
+          <li>
+            <Link href="/envelopes" className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-700">
+              <Mail className="h=5 w-5" />
+              <span>Envelopes</span>
             </Link>
           </li>
           <li>
